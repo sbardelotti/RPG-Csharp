@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "RPG_GAME/1.0.0": {
+        "dependencies": {
+          "Motor": "1.0.0"
+        },
+        "runtime": {
+          "RPG_GAME.dll": {}
+        }
+      },
+      "Motor/1.0.0": {
+        "runtime": {
+          "Motor.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "RPG_GAME/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Motor/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPG_GAME", "RPG_GAME.csproj", "{A886886C-3783-401D-9A3A-8678F31146F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motor", "..\Motor\Motor.csproj", "{F437C7F0-1405-4501-A0C7-F67E85B22251}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A886886C-3783-401D-9A3A-8678F31146F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A886886C-3783-401D-9A3A-8678F31146F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A886886C-3783-401D-9A3A-8678F31146F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A886886C-3783-401D-9A3A-8678F31146F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F437C7F0-1405-4501-A0C7-F67E85B22251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F437C7F0-1405-4501-A0C7-F67E85B22251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F437C7F0-1405-4501-A0C7-F67E85B22251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F437C7F0-1405-4501-A0C7-F67E85B22251}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4ADB6EDC-E98E-4B7B-B9B6-12C287A4AEAA}
+	EndGlobalSection
+EndGlobal
