@@ -18,13 +18,9 @@ namespace RPG_GAME
         {
             InitializeComponent();
 
-            _player = new Player();
+            Location location = new Location(1, "House", "Your house");
 
-            _player.CurrentHitPoints = 10;
-            _player.MaximumHitPoints = 10;
-            _player.Gold = 20;
-            _player.ExperiencePoints = 0;
-            _player.Level = 1;
+            _player = new Player(10, 10, 20, 0, 1);
 
             lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
             lb_gold.Text = _player.Gold.ToString();
