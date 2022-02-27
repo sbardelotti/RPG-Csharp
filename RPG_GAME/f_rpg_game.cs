@@ -14,6 +14,7 @@ namespace RPG_GAME
     public partial class f_rpg_game : Form
     {
         private Player _player;
+        private Monster _currentMonster;
         public f_rpg_game()
         {
             InitializeComponent();
@@ -31,22 +32,22 @@ namespace RPG_GAME
 
         private void btn_north_Click(object sender, EventArgs e)
         {
-
+            MoveTo(_player.CurrentLocation.LocationToNorth);
         }
 
         private void btn_east_Click(object sender, EventArgs e)
         {
-
+            MoveTo(_player.CurrentLocation.LocationToEast);
         }
 
         private void btn_south_Click(object sender, EventArgs e)
         {
-
+            MoveTo(_player.CurrentLocation.LocationToSouth);
         }
 
         private void btn_west_Click(object sender, EventArgs e)
         {
-
+            MoveTo(_player.CurrentLocation.LocationToWest);
         }
 
         private void MoveTo(Location newLocation)
@@ -155,12 +156,182 @@ namespace RPG_GAME
                             rtb_messages.Text += "You receive: " + Environment.NewLine;
                             rtb_messages.Text += newLocation.QuestAvaibleHere.RewardExperiencePoints.ToString() + " experience points" + Environment.NewLine;
                             rtb_messages.Text += newLocation.QuestAvaibleHere.RewardGold.ToString() + " gold" + Environment.NewLine;
+                            rtb_messages.Text += newLocation.QuestAvaibleHere.RewardItem.Name + Environment.NewLine;
+                            rtb_messages.Text += Environment.NewLine;
 
+                            _player.ExperiencePoints += newLocation.QuestAvaibleHere.RewardExperiencePoints;
+                            _player.Gold += newLocation.QuestAvaibleHere.RewardGold;
+
+                            bool addedItemToPlayerInventory = false;
+
+                            foreach(InventoryItem ii in _player.Inventory)
+                            {
+                                if(ii.Details.ID == newLocation.QuestAvaibleHere.RewardItem.ID)
+                                {
+                                    ii.Quantity ++;
+                                    addedItemToPlayerInventory = true;
+                                    break;
+                                }
+                            }
+
+                            if (!addedItemToPlayerInventory)
+                            {
+                                _player.Inventory.Add(new InventoryItem(newLocation.QuestAvaibleHere.RewardItem, 1));
+                            }
+
+                            foreach(PlayerQuest pq in _player.Quests)
+                            {
+                                if(pq.Details.ID == newLocation.QuestAvaibleHere.ID)
+                                {
+                                    pq.IsCompleted = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
+                else
+                {
+                    rtb_messages.Text += "You receive the " + newLocation.QuestAvaibleHere.Name + " quest." + Environment.NewLine;
+                    rtb_messages.Text += newLocation.QuestAvaibleHere.Description + Environment.NewLine;
+                    rtb_messages.Text += "To complete it, return with:" + Environment.NewLine;
+
+                    foreach(QuestCompletionItem qci in newLocation.QuestAvaibleHere.QuestCompletionItems)
+                    {
+                        if(qci.Quantity == 1)
+                        {
+                            rtb_messages.Text += qci.Quantity.ToString() + " " + qci.Details.Name + Environment.NewLine;
+                        }
+                        else
+                        {
+                            rtb_messages.Text += qci.Quantity.ToString() + " " + qci.Details.NamePlural + Environment.NewLine;
+                        }
+                    }
+
+                    rtb_messages.Text += Environment.NewLine;
+                    _player.Quests.Add(new PlayerQuest(newLocation.QuestAvaibleHere));
+                }
+            }
+
+            if(newLocation.MonsterLivingHere != null)
+            {
+                rtb_messages.Text += "You see a " + newLocation.MonsterLivingHere.Name + Environment.NewLine;
+
+                Monster standardMonster = World.MonsterByID(newLocation.MonsterLivingHere.ID);
+                _currentMonster = new Monster(standardMonster.ID, standardMonster.Name, standardMonster.MaximumDamage, standardMonster.RewardExperiencePoints, standardMonster.RewardGold, standardMonster.CurrentHitPoints, standardMonster.MaximumDamage);
+
+                foreach(LootItem lootItem in standardMonster.LootTable)
+                {
+                    _currentMonster.LootTable.Add(lootItem);
+                }
+
+                cb_weapons.Visible = true;
+                cb_potions.Visible = true;
+                btn_use_weapon.Visible = true;
+                btn_use_potion.Visible = true;
+            }
+            else
+            {
+                _currentMonster = null;
+
+                cb_weapons.Visible = false;
+                cb_potions.Visible = false;
+                btn_use_weapon.Visible = false;
+                btn_use_potion.Visible = false;
+            }
+
+            dgv_inventory.RowHeadersVisible = false;
+
+            dgv_inventory.ColumnCount = 2;
+            dgv_inventory.Columns[0].Name = "Name";
+            dgv_inventory.Columns[1].Width = 197;
+            dgv_inventory.Columns[1].Name = "Quantity";
+
+            dgv_inventory.Rows.Clear();
+
+            foreach(InventoryItem ii in _player.Inventory)
+            {
+                if(ii.Quantity > 0)
+                {
+                    dgv_inventory.Rows.Add(new[] { ii.Details.Name, ii.Quantity.ToString() });
+                }
+            }
+
+            dgv_quests.RowHeadersVisible = false;
+
+            dgv_quests.ColumnCount = 2;
+            dgv_quests.Columns[0].Name = "Name";
+            dgv_quests.Columns[1].Width = 197;
+            dgv_quests.Columns[1].Name = "Done?";
+
+            dgv_quests.Rows.Clear();
+
+            foreach(PlayerQuest pq in _player.Quests)
+            {
+                dgv_quests.Rows.Add(new[] { pq.Details.Name, pq.IsCompleted.ToString() });
+            }
+
+            List<Weapon> weapons = new List<Weapon>();
+
+            foreach(InventoryItem ii in _player.Inventory)
+            {
+                if(ii.Details is Weapon)
+                {
+                    if(ii.Quantity > 0)
+                    {
+                        weapons.Add((Weapon)ii.Details);
+                    }
+                }
+            }
+
+            if(weapons.Count == 0)
+            {
+                cb_weapons.Visible = false;
+                btn_use_weapon.Visible = false;
+            }
+            else
+            {
+                cb_weapons.DataSource = weapons;
+                cb_weapons.DisplayMember = "Name";
+                cb_weapons.ValueMember = "ID";
+                cb_weapons.SelectedIndex = 0;
+            }
+
+            List<HealingPotion> healingPotions = new List<HealingPotion>();
+
+            foreach(InventoryItem ii in _player.Inventory)
+            {
+                if(ii.Details is HealingPotion)
+                {
+                    if(ii.Quantity > 0)
+                    {
+                        healingPotions.Add((HealingPotion)ii.Details);
+                    }
+                }
+            }
+
+            if(healingPotions.Count == 0)
+            {
+                cb_potions.Visible = false;
+                btn_use_potion.Visible = false;
+            }
+            else
+            {
+                cb_potions.DataSource = healingPotions;
+                cb_potions.DisplayMember = "Name";
+                cb_potions.ValueMember = "ID";
+                cb_potions.SelectedIndex = 0;
             }
         }
 
+        private void btn_use_weapon_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btn_use_potion_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

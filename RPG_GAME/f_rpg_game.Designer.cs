@@ -159,6 +159,7 @@ namespace RPG_GAME
             this.btn_use_weapon.TabIndex = 11;
             this.btn_use_weapon.Text = "Use";
             this.btn_use_weapon.UseVisualStyleBackColor = true;
+            this.btn_use_weapon.Click += new System.EventHandler(this.btn_use_weapon_Click);
             // 
             // btn_use_potion
             // 
@@ -168,6 +169,7 @@ namespace RPG_GAME
             this.btn_use_potion.TabIndex = 12;
             this.btn_use_potion.Text = "Use";
             this.btn_use_potion.UseVisualStyleBackColor = true;
+            this.btn_use_potion.Click += new System.EventHandler(this.btn_use_potion_Click);
             // 
             // btn_north
             // 
