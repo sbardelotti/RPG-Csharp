@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Motor
 {
-    class World
+    public static class World
     {
         //initializing lists
         public static readonly List<Item> Items = new List<Item>();
