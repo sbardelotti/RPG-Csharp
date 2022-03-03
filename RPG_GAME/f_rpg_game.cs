@@ -75,55 +75,78 @@ namespace RPG_GAME
 
             if(newLocation.QuestAvaibleHere != null)
             {
-                bool playerAlreadyHasQuest = _player.HasThisQuest(newLocation.QuestAvaibleHere);
-                bool playerAlreadyCompletedQuest = _player.CompletedThisQuest(newLocation.QuestAvaibleHere);
-                bool playerHasAllItemsToCompleteQuest = _player.HasAllQuestCompletionItems(newLocation.QuestAvaibleHere);
-
-                if (playerAlreadyHasQuest)
+                foreach(Quest questAvaibleHere in newLocation.QuestAvaibleHere)
                 {
-                    if(!playerAlreadyCompletedQuest)
+                    bool playerAlreadyHasQuest = _player.HasThisQuest(questAvaibleHere);
+                    bool playerAlreadyCompletedQuest = _player.CompletedThisQuest(questAvaibleHere);
+                    bool playerHasAllItemsToCompleteQuest = _player.HasAllQuestCompletionItems(questAvaibleHere);
+
+                    if (playerAlreadyHasQuest)
                     {
-                        if(playerHasAllItemsToCompleteQuest)
+                        if (!playerAlreadyCompletedQuest)
                         {
-                            rtb_messages.Text += Environment.NewLine;
-                            rtb_messages.Text += "You complete the " + newLocation.QuestAvaibleHere.Name + Environment.NewLine;
+                            if (playerHasAllItemsToCompleteQuest)
+                            {
+                                rtb_messages.Text += Environment.NewLine;
+                                rtb_messages.Text += "You complete the " + questAvaibleHere.Name + Environment.NewLine;
 
-                            _player.RemoveQuestCompletionItems(newLocation.QuestAvaibleHere);
+                                _player.RemoveQuestCompletionItems(questAvaibleHere);
 
-                            rtb_messages.Text += "You receive: " + Environment.NewLine;
-                            rtb_messages.Text += newLocation.QuestAvaibleHere.RewardExperiencePoints.ToString() + " experience points" + Environment.NewLine;
-                            rtb_messages.Text += newLocation.QuestAvaibleHere.RewardGold.ToString() + " gold" + Environment.NewLine;
-                            rtb_messages.Text += newLocation.QuestAvaibleHere.RewardItem.Name + Environment.NewLine;
-                            rtb_messages.Text += Environment.NewLine;
+                                rtb_messages.Text += "You receive: " + Environment.NewLine;
+                                rtb_messages.Text += questAvaibleHere.RewardExperiencePoints.ToString() + " experience points" + Environment.NewLine;
+                                rtb_messages.Text += questAvaibleHere.RewardGold.ToString() + " gold" + Environment.NewLine;
+                                if (questAvaibleHere.RewardItem != null)
+                                {
+                                    foreach (QuestCompletionItem qci in questAvaibleHere.RewardItem)
+                                    {
+                                        if (qci.Quantity > 1)
+                                        {
+                                            rtb_messages.Text += qci.Details.NamePlural + " x " + qci.Quantity + Environment.NewLine;
+                                        }
+                                        else
+                                        {
+                                            rtb_messages.Text += qci.Details.Name + Environment.NewLine;
+                                        }
 
-                            _player.ExperiencePoints += newLocation.QuestAvaibleHere.RewardExperiencePoints;
-                            _player.Gold += newLocation.QuestAvaibleHere.RewardGold;
-                            _player.AddItemInventory(newLocation.QuestAvaibleHere.RewardItem);
+                                    }
+                                }
+                                rtb_messages.Text += Environment.NewLine;
 
-                            _player.MarkQuestCompleted(newLocation.QuestAvaibleHere);
+                                _player.ExperiencePoints += questAvaibleHere.RewardExperiencePoints;
+                                _player.Gold += questAvaibleHere.RewardGold;
+                                if (questAvaibleHere.RewardItem != null)
+                                {
+                                    _player.AddItemsInventory(questAvaibleHere.RewardItem);
+                                }
+
+                                _player.MarkQuestCompleted(questAvaibleHere);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    rtb_messages.Text += "You receive the " + newLocation.QuestAvaibleHere.Name + " quest." + Environment.NewLine;
-                    rtb_messages.Text += newLocation.QuestAvaibleHere.Description + Environment.NewLine;
-                    rtb_messages.Text += "To complete it, return with:" + Environment.NewLine;
-
-                    foreach(QuestCompletionItem qci in newLocation.QuestAvaibleHere.QuestCompletionItems)
+                    else
                     {
-                        if(qci.Quantity == 1)
+                        if (questAvaibleHere.ConditionToStartQuest)
                         {
-                            rtb_messages.Text += qci.Quantity.ToString() + " " + qci.Details.Name + Environment.NewLine;
-                        }
-                        else
-                        {
-                            rtb_messages.Text += qci.Quantity.ToString() + " " + qci.Details.NamePlural + Environment.NewLine;
+                            rtb_messages.Text += "You receive the " + questAvaibleHere.Name + " quest." + Environment.NewLine;
+                            rtb_messages.Text += questAvaibleHere.Description + Environment.NewLine;
+                            rtb_messages.Text += "To complete it, return with:" + Environment.NewLine;
+
+                            foreach (QuestCompletionItem qci in questAvaibleHere.QuestCompletionItems)
+                            {
+                                if (qci.Quantity == 1)
+                                {
+                                    rtb_messages.Text += qci.Quantity.ToString() + " " + qci.Details.Name + Environment.NewLine;
+                                }
+                                else
+                                {
+                                    rtb_messages.Text += qci.Quantity.ToString() + " " + qci.Details.NamePlural + Environment.NewLine;
+                                }
+                            }
+
+                            rtb_messages.Text += Environment.NewLine;
+                            _player.Quests.Add(new PlayerQuest(questAvaibleHere));
                         }
                     }
-
-                    rtb_messages.Text += Environment.NewLine;
-                    _player.Quests.Add(new PlayerQuest(newLocation.QuestAvaibleHere));
                 }
             }
 
@@ -274,13 +297,13 @@ namespace RPG_GAME
                 _player.Gold += _currentMonster.RewardGold;
                 rtb_messages.Text += "You receive " + _currentMonster.RewardGold + " gold." + Environment.NewLine;
 
-                List<InventoryItem> lootedItems = new List<InventoryItem>();
+                List<QuestCompletionItem> lootedItems = new List<QuestCompletionItem>();
 
                 foreach(LootItem lootItem in _currentMonster.LootTable)
                 {
                     if(RandomNumberGenerator.NumberBetween(1, 100) <= lootItem.DropPercentage)
                     {
-                        lootedItems.Add(new InventoryItem(lootItem.Details, 1));
+                        lootedItems.Add(new QuestCompletionItem(lootItem.Details, RandomNumberGenerator.NumberBetween(1, lootItem.MaximumDrop)));
                     }
                 }
 
@@ -290,23 +313,30 @@ namespace RPG_GAME
                     {
                         if (lootItem.IsDefaultItem)
                         {
-                            lootedItems.Add(new InventoryItem(lootItem.Details, 1));
+                            lootedItems.Add(new QuestCompletionItem(lootItem.Details, 1));
                         }
                     }
                 }
 
-                foreach(InventoryItem ii in lootedItems)
+                if (lootedItems.Count != 0)
                 {
-                    _player.AddItemInventory(ii.Details);
+                    _player.AddItemsInventory(lootedItems);
 
-                    if(ii.Quantity == 1)
+                    foreach (QuestCompletionItem qci in lootedItems)
                     {
-                        rtb_messages.Text += "You loot 1 " + ii.Details.Name + Environment.NewLine;
+                        if (qci.Quantity == 1)
+                        {
+                            rtb_messages.Text += "You loot 1 " + qci.Details.Name + Environment.NewLine;
+                        }
+                        else
+                        {
+                            rtb_messages.Text += "You loot " + qci.Quantity.ToString() + " " + qci.Details.NamePlural + Environment.NewLine;
+                        }
                     }
-                    else
-                    {
-                        rtb_messages.Text += "You loot " + ii.Quantity.ToString() + Environment.NewLine;
-                    }
+                }
+                else
+                {
+                    rtb_messages.Text += "You loot nothing" + Environment.NewLine;
                 }
 
                 lb_hitPoints.Text = _player.CurrentHitPoints.ToString();

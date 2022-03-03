@@ -112,18 +112,24 @@ namespace Motor
             }
         }
 
-        public void AddItemInventory(Item itemToAdd)
+        public void AddItemsInventory(List<QuestCompletionItem> listItem)
         {
-            foreach(InventoryItem ii in Inventory)
+            foreach(QuestCompletionItem qci in listItem) 
             {
-                if(ii.Details.ID == itemToAdd.ID)
+                bool haveItemInInventory = false;
+                foreach(InventoryItem ii in Inventory)
                 {
-                    ii.Quantity++;
-                    return;
+                    if (ii.Details.ID == qci.Details.ID)
+                    {
+                        ii.Quantity += qci.Quantity;
+                        haveItemInInventory = true;
+                    }
+                }
+                if (!haveItemInInventory)
+                {
+                    Inventory.Add(new InventoryItem(qci.Details, qci.Quantity));
                 }
             }
-
-            Inventory.Add(new InventoryItem(itemToAdd, 1));
         }
 
         public void MarkQuestCompleted(Quest quest)
@@ -133,6 +139,10 @@ namespace Motor
                 if(pq.Details.ID == quest.ID)
                 {
                     pq.IsCompleted = true;
+                    if(pq.Details.IDPosteriorQuest != 0)
+                    {
+                        World.QuestByID(pq.Details.IDPosteriorQuest).ConditionToStartQuest = true;
+                    }
                     return;
                 }
             }

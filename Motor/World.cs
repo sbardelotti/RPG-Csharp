@@ -31,6 +31,7 @@ namespace Motor
         //declaring quests
         public const int QUEST_ID_CLEAR_ALCHEMIST_GARDEN = 1;
         public const int QUEST_ID_CLEAR_FARMERS_FIELD = 2;
+        public const int QUEST_ID_CLEAR_FOREST = 3;
         //declaring locations
         public const int LOCATION_ID_HOME = 1;
         public const int LOCATION_ID_TOWN_SQUARE = 2;
@@ -69,16 +70,16 @@ namespace Motor
         {
             //creating monsters
             Monster rat = new Monster(MONSTER_ID_RAT, "Rat", 5, 3, 10, 3, 3);
-            rat.LootTable.Add(new LootItem(ItemByID(ITEM_ID_RAT_TAIL), 75, false));
-            rat.LootTable.Add(new LootItem(ItemByID(ITEM_ID_PIECE_OF_FUR), 75, true));
+            rat.LootTable.Add(new LootItem(ItemByID(ITEM_ID_RAT_TAIL), 75, false, 2));
+            rat.LootTable.Add(new LootItem(ItemByID(ITEM_ID_PIECE_OF_FUR), 75, true, 3));
 
             Monster snake = new Monster(MONSTER_ID_SNAKE, "Snake", 5, 3, 10, 3, 3);
-            snake.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SNAKE_FANG), 75, false));
-            snake.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SNAKE_SKIN), 75, true));
+            snake.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SNAKE_FANG), 75, false, 2));
+            snake.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SNAKE_SKIN), 75, true, 1));
 
             Monster gigantSpider = new Monster(MONSTER_ID_GIGANT_SPIDER, "Gigant spider", 20, 5, 40, 10, 10);
-            gigantSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SPIDER_FANG), 75, true));
-            gigantSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SPIDER_SILK), 25, false));
+            gigantSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SPIDER_FANG), 75, true, 2));
+            gigantSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SPIDER_SILK), 25, false, 5));
             //adding monsters to list
             Monsters.Add(rat);
             Monsters.Add(snake);
@@ -88,16 +89,24 @@ namespace Motor
         private static void PopulateQuests()
         {
             //creating quests
-            Quest clearAlchemistGarden = new Quest(QUEST_ID_CLEAR_ALCHEMIST_GARDEN, "Clear alchemist's garden", "Kill rats in the alchemist's garden and bring back 3 rat tails. You will receive a healing potion and 10 gold pieces.", 20, 10);
+            Quest clearAlchemistGarden = new Quest(QUEST_ID_CLEAR_ALCHEMIST_GARDEN, "Clear alchemist's garden", "Kill rats in the alchemist's garden and bring back 3 rat tails and 5 pieces of fur. You will receive 2 healing potion, 1 club and 10 gold pieces.", 20, 10);
             clearAlchemistGarden.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_RAT_TAIL), 3));
-            clearAlchemistGarden.RewardItem = ItemByID(ITEM_ID_HEALING_POTION);
+            clearAlchemistGarden.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_PIECE_OF_FUR), 5));
+            clearAlchemistGarden.RewardItem.Add(new QuestCompletionItem(ItemByID(ITEM_ID_HEALING_POTION), 2));
+            clearAlchemistGarden.RewardItem.Add(new QuestCompletionItem(ItemByID(ITEM_ID_CLUB), 1));
 
-            Quest clearFarmersFild = new Quest(QUEST_ID_CLEAR_FARMERS_FIELD, "Clear farmer's fild", "Kill snakes in the farmer's field and bring back 3 snake fangs. You will receive an adventurer's pass an 20 gold piecies.", 20, 20);
+            Quest clearFarmersFild = new Quest(QUEST_ID_CLEAR_FARMERS_FIELD, "Clear farmer's fild", "Kill snakes in the farmer's field and bring back 3 snake fangs. You will receive an adventurer's pass an 20 gold piecies.", 20, 20, QUEST_ID_CLEAR_FOREST);
             clearFarmersFild.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_SNAKE_FANG), 3));
-            clearFarmersFild.RewardItem = ItemByID(ITEM_ID_ADVENTURER_PASS);
+            clearFarmersFild.RewardItem.Add(new QuestCompletionItem(ItemByID(ITEM_ID_ADVENTURER_PASS), 1));
+
+            Quest clearForest = new Quest(QUEST_ID_CLEAR_FOREST, "Clear Forest", "Kill spiders in the forest and bring back 2 silks and 1 spider fang. You will receive 50 gold piecies", 60, 50, 0, false);
+            clearForest.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_SPIDER_SILK), 2));
+            clearForest.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_SPIDER_FANG), 2));
+
             //adding quests to list
             Quests.Add(clearAlchemistGarden);
             Quests.Add(clearFarmersFild);
+            Quests.Add(clearForest);
         }
 
         private static void PopulateLocations()
@@ -106,15 +115,16 @@ namespace Motor
             Location home = new Location(LOCATION_ID_HOME, "Home", "Your house.");
 
             Location townSquare = new Location(LOCATION_ID_TOWN_SQUARE, "Town square", "You see a fountain");
+            townSquare.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_FOREST));
 
             Location alchemistHut = new Location(LOCATION_ID_ALCHEMIST_HUT, "Alchemist's hut", "There are many strange plants on the shelves.");
-            alchemistHut.QuestAvaibleHere = QuestByID(QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
+            alchemistHut.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_ALCHEMIST_GARDEN));
 
             Location alchemistGarden = new Location(LOCATION_ID_ALCHEMIST_GARDEN, "Alchemist's garden", "Many plants are growing here.");
             alchemistGarden.MonsterLivingHere = MonsterByID(MONSTER_ID_RAT);
 
             Location farmhouse = new Location(LOCATION_ID_FARMHOUSE, "Farmhouse", "There is a small farmhouse, with a farmer in front.");
-            farmhouse.QuestAvaibleHere = QuestByID(QUEST_ID_CLEAR_FARMERS_FIELD);
+            farmhouse.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_FARMERS_FIELD));
 
             Location farmersField = new Location(LOCATION_ID_FARM_FIELD, "Farm's field", "You see a row of vegetables growing here.");
             farmersField.MonsterLivingHere = MonsterByID(MONSTER_ID_SNAKE);

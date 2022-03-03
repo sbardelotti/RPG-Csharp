@@ -11,12 +11,14 @@ namespace Motor
         public Item Details { get; set; }
         public int DropPercentage { get; set; }
         public bool IsDefaultItem { get; set; }
+        public int MaximumDrop { get; set; }
 
-        public LootItem(Item details, int dropPercentage, bool isDefaultItem)
+        public LootItem(Item details, int dropPercentage, bool isDefaultItem, int maximumDrop)
         {
             Details = details;
             DropPercentage = dropPercentage;
             IsDefaultItem = isDefaultItem;
+            MaximumDrop = maximumDrop;
         }
     }
 }
