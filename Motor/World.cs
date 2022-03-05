@@ -24,10 +24,24 @@ namespace Motor
         public const int ITEM_ID_SPIDER_FANG = 8;
         public const int ITEM_ID_SPIDER_SILK = 9;
         public const int ITEM_ID_ADVENTURER_PASS = 10;
+        public const int ITEM_ID_WOLF_TOOTH = 11;
+        public const int ITEM_ID_WOLF_CLAW = 12;
+        public const int ITEM_ID_DAGGER = 13;
+        public const int ITEM_ID_BEAR_SKIN = 14;
+        public const int ITEM_ID_PANTHER_SKIN = 15;
+        public const int ITEM_ID_IRON_SWORD = 16;
+        public const int ITEM_ID_GIGANT_SPIDER_FANG = 17;
+        public const int ITEM_ID_SLIME_GEL = 18;
         //declaring monsters
         public const int MONSTER_ID_RAT = 1;
         public const int MONSTER_ID_SNAKE = 2;
         public const int MONSTER_ID_GIGANT_SPIDER = 3;
+        public const int MONSTER_ID_SLIME = 4;
+        public const int MONSTER_ID_WOLF = 5;
+        public const int MONSTER_ID_BANDIT = 6;
+        public const int MONSTER_ID_BEAR = 7;
+        public const int MONSTER_ID_PANTHER = 8;
+        public const int MONSTER_ID_QUEEN_SPIDER = 9;
         //declaring quests
         public const int QUEST_ID_CLEAR_ALCHEMIST_GARDEN = 1;
         public const int QUEST_ID_CLEAR_FARMERS_FIELD = 2;
@@ -42,6 +56,15 @@ namespace Motor
         public const int LOCATION_ID_FARM_FIELD = 7;
         public const int LOCATION_ID_BRIDGE = 8;
         public const int LOCATION_ID_SPIDER_FIELD = 9;
+        public const int LOCATION_ID_WOOD = 10;
+        public const int LOCATION_ID_INSIDE_WOOD = 11;
+        public const int LOCATION_ID_CLEARING = 12;
+        public const int LOCATION_ID_CAVE = 13;
+        public const int LOCATION_ID_INSIDE_CAVE = 14;
+        public const int LOCATION_ID_STREAM = 15;
+        public const int LOCATION_ID_FOREST1 = 16;
+        public const int LOCATION_ID_FOREST2 = 17;
+        public const int LOCATION_ID_FOREST3 = 18;
 
         static World()
         {
@@ -64,6 +87,14 @@ namespace Motor
             Items.Add(new Item(ITEM_ID_SPIDER_FANG, "Spider fang", "Spider fangs"));
             Items.Add(new Item(ITEM_ID_SPIDER_SILK, "Spider silk", "Spider silks"));
             Items.Add(new Item(ITEM_ID_ADVENTURER_PASS, "Adventurer pass", "Adventurer passes"));
+            Items.Add(new Item(ITEM_ID_WOLF_TOOTH, "Wolf tooth", "Wolf tooths"));
+            Items.Add(new Item(ITEM_ID_WOLF_CLAW, "Wolf claw", "Wolf claws"));
+            Items.Add(new Weapon(ITEM_ID_DAGGER, "Dagger", "Daggers", 5, 12));
+            Items.Add(new Item(ITEM_ID_BEAR_SKIN, "Bear skin", "Bear skins"));
+            Items.Add(new Item(ITEM_ID_PANTHER_SKIN, "Panther skin", "Panther skins"));
+            Items.Add(new Weapon(ITEM_ID_IRON_SWORD, "Iron sword", "Iron swords", 10, 15));
+            Items.Add(new Item(ITEM_ID_GIGANT_SPIDER_FANG, "Gigant spider fang", "Gigant spider fangs"));
+            Items.Add(new Item(ITEM_ID_SLIME_GEL, "Slime gel", "Slime gels"));
         }
 
         private static void PopulateMonsters()
@@ -77,13 +108,38 @@ namespace Motor
             snake.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SNAKE_FANG), 75, false, 2));
             snake.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SNAKE_SKIN), 75, true, 1));
 
-            Monster gigantSpider = new Monster(MONSTER_ID_GIGANT_SPIDER, "Gigant spider", 20, 5, 40, 10, 10);
+            Monster gigantSpider = new Monster(MONSTER_ID_GIGANT_SPIDER, "Gigant spider", 10, 5, 10, 10, 10);
             gigantSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SPIDER_FANG), 75, true, 2));
             gigantSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SPIDER_SILK), 25, false, 5));
+
+            Monster slime = new Monster(MONSTER_ID_SLIME, "Slime", 2, 1, 0, 3, 3);
+            slime.LootTable.Add(new LootItem(ItemByID(ITEM_ID_SLIME_GEL), 50, false, 3));
+
+            Monster wolf = new Monster(MONSTER_ID_WOLF, "Wolf", 8, 15, 5, 8, 8);
+            wolf.LootTable.Add(new LootItem(ItemByID(ITEM_ID_WOLF_TOOTH), 50, false, 2));
+            wolf.LootTable.Add(new LootItem(ItemByID(ITEM_ID_WOLF_CLAW), 75, true, 4));
+
+            Monster bandit = new Monster(MONSTER_ID_BANDIT, "Bandit", 12, 15, 20, 14, 14);
+            bandit.LootTable.Add(new LootItem(ItemByID(ITEM_ID_DAGGER), 20, false, 1));
+
+            Monster bear = new Monster(MONSTER_ID_BEAR, "Bear", 8, 13, 5, 20, 20);
+            bear.LootTable.Add(new LootItem(ItemByID(ITEM_ID_BEAR_SKIN), 75, true, 3));
+
+            Monster panther = new Monster(MONSTER_ID_PANTHER, "Panther", 15, 18, 10, 8, 8);
+            panther.LootTable.Add(new LootItem(ItemByID(ITEM_ID_PANTHER_SKIN), 75, true, 2));
+
+            Monster queenSpider = new Monster(MONSTER_ID_QUEEN_SPIDER, "Queen spider", 20, 40, 35, 25, 25);
+            queenSpider.LootTable.Add(new LootItem(ItemByID(ITEM_ID_GIGANT_SPIDER_FANG), 75, false, 2));
             //adding monsters to list
             Monsters.Add(rat);
             Monsters.Add(snake);
             Monsters.Add(gigantSpider);
+            Monsters.Add(slime);
+            Monsters.Add(wolf);
+            Monsters.Add(bandit);
+            Monsters.Add(bear);
+            Monsters.Add(panther);
+            Monsters.Add(queenSpider);
         }
 
         private static void PopulateQuests()
@@ -114,6 +170,18 @@ namespace Motor
             //create each location
             Location home = new Location(LOCATION_ID_HOME, "Home", "Your house.");
 
+            Location stream = new Location(LOCATION_ID_STREAM, "Stream", "A small stream.");
+
+            Location woods = new Location(LOCATION_ID_WOOD, "Wood", "Tree and bushes, different shades of green fill your field of vision.");
+
+            Location insideWoods = new Location(LOCATION_ID_INSIDE_WOOD, "Inside the woods", "You see traces of battle around the area.");
+
+            Location clearing = new Location(LOCATION_ID_CLEARING, "Clearing", "An open field among the trees.");
+
+            Location cave = new Location(LOCATION_ID_CAVE, "Cave", "You see the entrance to a cave between some bushes.");
+
+            Location insideCave = new Location(LOCATION_ID_INSIDE_CAVE, "Inside cave", "The environment is stuffy and with little light, but it is still possible to see with some difficulty.");
+
             Location townSquare = new Location(LOCATION_ID_TOWN_SQUARE, "Town square", "You see a fountain");
             townSquare.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_FOREST));
 
@@ -133,10 +201,32 @@ namespace Motor
 
             Location bridge = new Location(LOCATION_ID_BRIDGE, "Bridge", "A stone bridge crosses a wide river.");
 
-            Location spiderField = new Location(LOCATION_ID_SPIDER_FIELD, "Forest", "You see spider webs covering the trees in this florest");
+            Location spiderField = new Location(LOCATION_ID_SPIDER_FIELD, "Forest", "You see spider webs covering the trees in this florest.");
             spiderField.MonsterLivingHere = MonsterByID(MONSTER_ID_GIGANT_SPIDER);
+
+            Location forest1 = new Location(LOCATION_ID_FOREST1, "Forest", "The treetops block most of the sunlight.");
+
+            Location forest2 = new Location(LOCATION_ID_FOREST2, "Forest", "Movement is difficult due to the amount of vegetation. You fell watched.");
+
+            Location forest3 = new Location(LOCATION_ID_FOREST3, "Forest", "You see large web cocoons in human form.");
             //link locations
             home.LocationToNorth = townSquare;
+            home.LocationToEast = stream;
+            home.LocationToWest = woods;
+
+            stream.LocationToWest = home;
+
+            woods.LocationToEast = home;
+            woods.LocationToWest = insideWoods;
+
+            insideWoods.LocationToEast = woods;
+            insideWoods.LocationToWest = clearing;
+            insideWoods.LocationToSouth = cave;
+
+            cave.LocationToNorth = insideWoods;
+            cave.LocationToSouth = insideCave;
+
+            insideCave.LocationToNorth = cave;
 
             townSquare.LocationToNorth = alchemistHut;
             townSquare.LocationToSouth = home;
@@ -160,6 +250,15 @@ namespace Motor
             bridge.LocationToEast = spiderField;
 
             spiderField.LocationToWest = bridge;
+            spiderField.LocationToNorth = forest1;
+
+            forest1.LocationToSouth = spiderField;
+            forest1.LocationToNorth = forest2;
+
+            forest2.LocationToSouth = forest1;
+            forest2.LocationToNorth = forest3;
+
+            forest3.LocationToSouth = forest2;
             //adding location to list
             Locations.Add(home);
             Locations.Add(townSquare);
@@ -170,6 +269,15 @@ namespace Motor
             Locations.Add(farmersField);
             Locations.Add(bridge);
             Locations.Add(spiderField);
+            Locations.Add(stream);
+            Locations.Add(woods);
+            Locations.Add(insideWoods);
+            Locations.Add(clearing);
+            Locations.Add(cave);
+            Locations.Add(insideCave);
+            Locations.Add(forest1);
+            Locations.Add(forest2);
+            Locations.Add(forest3);
         }
 
         //takes the id and returns an item object
