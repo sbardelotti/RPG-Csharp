@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Motor;
+using System.IO;
 
 namespace RPG_GAME
 {
@@ -15,19 +16,22 @@ namespace RPG_GAME
     {
         private Player _player;
         private Monster _currentMonster;
+        private const string PLAYER_DATA_FILE_NAME = "PlayerData.xml";
         public f_rpg_game()
         {
             InitializeComponent();
 
-            _player = new Player(10, 10, 20, 0, 1);
-            _player.Inventory.Add(new InventoryItem(World.ItemByID(World.ITEM_ID_RUSTY_SWORD), 1));
+            if (File.Exists(PLAYER_DATA_FILE_NAME))
+            {
+                _player = Player.CreatePlayerFromXmlString(File.ReadAllText(PLAYER_DATA_FILE_NAME));
+            }
+            else
+            {
+                _player = Player.CreateDefaultPlayer();
+            }
 
             MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
-
-            lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
-            lb_gold.Text = _player.Gold.ToString();
-            lb_experience.Text = _player.ExperiencePoints.ToString();
-            lb_level.Text = _player.Level.ToString();
+            UpdatePlayerStats();
         }
 
         private void btn_north_Click(object sender, EventArgs e)
@@ -71,9 +75,9 @@ namespace RPG_GAME
             rtb_location.Text += newLocation.Description + Environment.NewLine;
 
             _player.CurrentHitPoints = _player.MaximumHitPoints;
-            lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
+            UpdatePlayerStats();
 
-            if(newLocation.QuestAvaibleHere != null)
+            if (newLocation.QuestAvaibleHere != null)
             {
                 foreach(Quest questAvaibleHere in newLocation.QuestAvaibleHere)
                 {
@@ -153,6 +157,7 @@ namespace RPG_GAME
             if(newLocation.MonsterLivingHere != null)
             {
                 rtb_messages.Text += "You see a " + newLocation.MonsterLivingHere.Name + Environment.NewLine;
+                rtb_messages.Text += Environment.NewLine;
 
                 Monster standardMonster = World.MonsterByID(newLocation.MonsterLivingHere.ID);
                 _currentMonster = new Monster(standardMonster.ID, standardMonster.Name, standardMonster.MaximumDamage, standardMonster.RewardExperiencePoints, standardMonster.RewardGold, standardMonster.CurrentHitPoints, standardMonster.MaximumDamage);
@@ -181,6 +186,7 @@ namespace RPG_GAME
             UpdateQuestListInUI();
             UpdateWeaponListInUI();
             UpdatePotionListInUI();
+            ScrollToBottomOfMessages();
         }
 
         private void UpdateInventoryListInUI()
@@ -338,16 +344,10 @@ namespace RPG_GAME
                 {
                     rtb_messages.Text += "You loot nothing" + Environment.NewLine;
                 }
-
-                lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
-                lb_experience.Text = _player.ExperiencePoints.ToString();
-                lb_gold.Text = _player.Gold.ToString();
-                lb_level.Text = _player.Level.ToString();
-
                 UpdateInventoryListInUI();
                 UpdateWeaponListInUI();
                 UpdatePotionListInUI();
-
+                
                 rtb_messages.Text += Environment.NewLine;
 
                 MoveTo(_player.CurrentLocation);
@@ -359,15 +359,17 @@ namespace RPG_GAME
 
                 rtb_messages.Text += "The " + _currentMonster.Name + " did " + damageToPlayer.ToString() + " points of damage." + Environment.NewLine;
                 _player.CurrentHitPoints -= damageToPlayer;
-                lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
 
                 if(_player.CurrentHitPoints <= 0)
                 {
                     rtb_messages.Text += "The " + _currentMonster.Name + " killed you." + Environment.NewLine;
                     MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
                 }
-            }
 
+                
+            }
+            ScrollToBottomOfMessages();
+            UpdatePlayerStats();
         }
 
         private void btn_use_potion_Click(object sender, EventArgs e)
@@ -396,16 +398,35 @@ namespace RPG_GAME
 
             rtb_messages.Text += "The " + _currentMonster.Name + " did " + damageToPlayer.ToString() + " points of damage." + Environment.NewLine;
             _player.CurrentHitPoints -= damageToPlayer;
-
+           
             if (_player.CurrentHitPoints <= 0)
             {
                 rtb_messages.Text += "The " + _currentMonster.Name + " killed you." + Environment.NewLine;
                 MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
             }
 
-            lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
+            ScrollToBottomOfMessages();
             UpdateInventoryListInUI();
             UpdatePotionListInUI();
+        }
+
+        private void ScrollToBottomOfMessages()
+        {
+            rtb_messages.SelectionStart = rtb_messages.Text.Length;
+            rtb_messages.ScrollToCaret();
+        }
+
+        private void UpdatePlayerStats()
+        {
+            lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
+            lb_gold.Text = _player.Gold.ToString();
+            lb_experience.Text = _player.ExperiencePoints.ToString();
+            lb_level.Text = _player.Level.ToString();
+        }
+
+        private void f_rpg_game_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());
         }
     }
 }

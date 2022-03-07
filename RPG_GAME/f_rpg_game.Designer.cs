@@ -290,8 +290,10 @@ namespace RPG_GAME
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "f_rpg_game";
             this.Text = "Rpg Simple Game";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.f_rpg_game_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_inventory)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_quests)).EndInit();
             this.ResumeLayout(false);
