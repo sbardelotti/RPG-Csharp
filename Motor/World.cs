@@ -159,6 +159,7 @@ namespace Motor
             clearForest.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_SPIDER_SILK), 2));
             clearForest.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_SPIDER_FANG), 2));
 
+
             //adding quests to list
             Quests.Add(clearAlchemistGarden);
             Quests.Add(clearFarmersFild);
@@ -171,16 +172,20 @@ namespace Motor
             Location home = new Location(LOCATION_ID_HOME, "Home", "Your house.");
 
             Location stream = new Location(LOCATION_ID_STREAM, "Stream", "A small stream.");
+            stream.MonsterLivingHere = MonsterByID(MONSTER_ID_SLIME);
 
             Location woods = new Location(LOCATION_ID_WOOD, "Wood", "Tree and bushes, different shades of green fill your field of vision.");
 
             Location insideWoods = new Location(LOCATION_ID_INSIDE_WOOD, "Inside the woods", "You see traces of battle around the area.");
+            insideWoods.MonsterLivingHere = MonsterByID(MONSTER_ID_WOLF);
 
             Location clearing = new Location(LOCATION_ID_CLEARING, "Clearing", "An open field among the trees.");
+            clearing.MonsterLivingHere = MonsterByID(MONSTER_ID_BANDIT);
 
             Location cave = new Location(LOCATION_ID_CAVE, "Cave", "You see the entrance to a cave between some bushes.");
 
             Location insideCave = new Location(LOCATION_ID_INSIDE_CAVE, "Inside cave", "The environment is stuffy and with little light, but it is still possible to see with some difficulty.");
+            insideCave.MonsterLivingHere = MonsterByID(MONSTER_ID_BEAR);
 
             Location townSquare = new Location(LOCATION_ID_TOWN_SQUARE, "Town square", "You see a fountain");
             townSquare.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_FOREST));
@@ -205,10 +210,13 @@ namespace Motor
             spiderField.MonsterLivingHere = MonsterByID(MONSTER_ID_GIGANT_SPIDER);
 
             Location forest1 = new Location(LOCATION_ID_FOREST1, "Forest", "The treetops block most of the sunlight.");
+            forest1.MonsterLivingHere = MonsterByID(MONSTER_ID_WOLF);
 
             Location forest2 = new Location(LOCATION_ID_FOREST2, "Forest", "Movement is difficult due to the amount of vegetation. You fell watched.");
+            forest2.MonsterLivingHere = MonsterByID(MONSTER_ID_PANTHER);
 
             Location forest3 = new Location(LOCATION_ID_FOREST3, "Forest", "You see large web cocoons in human form.");
+            forest3.MonsterLivingHere = MonsterByID(MONSTER_ID_QUEEN_SPIDER);
             //link locations
             home.LocationToNorth = townSquare;
             home.LocationToEast = stream;
@@ -222,6 +230,8 @@ namespace Motor
             insideWoods.LocationToEast = woods;
             insideWoods.LocationToWest = clearing;
             insideWoods.LocationToSouth = cave;
+
+            clearing.LocationToEast = insideWoods;
 
             cave.LocationToNorth = insideWoods;
             cave.LocationToSouth = insideCave;

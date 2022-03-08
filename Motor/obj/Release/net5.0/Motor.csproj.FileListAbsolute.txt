@@ -1,0 +1,12 @@
+C:\Users\Mimi\source\repos\RPG\Motor\bin\Release\net5.0\Motor.deps.json
+C:\Users\Mimi\source\repos\RPG\Motor\bin\Release\net5.0\Motor.dll
+C:\Users\Mimi\source\repos\RPG\Motor\bin\Release\net5.0\ref\Motor.dll
+C:\Users\Mimi\source\repos\RPG\Motor\bin\Release\net5.0\Motor.pdb
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.csproj.AssemblyReference.cache
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.AssemblyInfoInputs.cache
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.AssemblyInfo.cs
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.csproj.CoreCompileInputs.cache
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.dll
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\ref\Motor.dll
+C:\Users\Mimi\source\repos\RPG\Motor\obj\Release\net5.0\Motor.pdb
