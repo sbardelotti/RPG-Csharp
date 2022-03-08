@@ -30,7 +30,7 @@ namespace RPG_GAME
                 _player = Player.CreateDefaultPlayer();
             }
 
-            MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
+            MoveTo(_player.CurrentLocation);
             UpdatePlayerStats();
         }
 
@@ -116,7 +116,7 @@ namespace RPG_GAME
                                 }
                                 rtb_messages.Text += Environment.NewLine;
 
-                                _player.ExperiencePoints += questAvaibleHere.RewardExperiencePoints;
+                                _player.AddExperiencePoints(questAvaibleHere.RewardExperiencePoints);
                                 _player.Gold += questAvaibleHere.RewardGold;
                                 if (questAvaibleHere.RewardItem != null)
                                 {
@@ -248,10 +248,20 @@ namespace RPG_GAME
             }
             else
             {
+                cb_weapons.SelectedIndexChanged -= cb_weapons_SelectedIndexChanged;
                 cb_weapons.DataSource = weapons;
+                cb_weapons.SelectedIndexChanged += cb_weapons_SelectedIndexChanged;
                 cb_weapons.DisplayMember = "Name";
                 cb_weapons.ValueMember = "ID";
-                cb_weapons.SelectedIndex = 0;
+
+                if(_player.CurrentWeapon != null)
+                {
+                    cb_weapons.SelectedItem = _player.CurrentWeapon;
+                }
+                else
+                {
+                    cb_weapons.SelectedIndex = 0;
+                }
             }
         }
 
@@ -298,7 +308,7 @@ namespace RPG_GAME
                 rtb_messages.Text += Environment.NewLine;
                 rtb_messages.Text += "You defeated the " + _currentMonster.Name + Environment.NewLine;
 
-                _player.ExperiencePoints += _currentMonster.RewardExperiencePoints;
+                _player.AddExperiencePoints(_currentMonster.RewardExperiencePoints);
                 rtb_messages.Text += "You receive " + _currentMonster.RewardExperiencePoints + " experience points." + Environment.NewLine;
                 _player.Gold += _currentMonster.RewardGold;
                 rtb_messages.Text += "You receive " + _currentMonster.RewardGold + " gold." + Environment.NewLine;
@@ -427,6 +437,11 @@ namespace RPG_GAME
         private void f_rpg_game_FormClosed(object sender, FormClosedEventArgs e)
         {
             File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());
+        }
+
+        private void cb_weapons_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _player.CurrentWeapon = (Weapon) cb_weapons.SelectedItem;
         }
     }
 }
