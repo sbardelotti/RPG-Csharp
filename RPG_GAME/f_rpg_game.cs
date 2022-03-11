@@ -30,8 +30,63 @@ namespace RPG_GAME
                 _player = Player.CreateDefaultPlayer();
             }
 
+            lb_hitPoints.DataBindings.Add("Text", _player, "CurrentHitPoints");
+            lb_gold.DataBindings.Add("Text", _player, "Gold");
+            lb_experience.DataBindings.Add("Text", _player, "ExperiencePoints");
+            lb_level.DataBindings.Add("Text", _player, "Level");
+
+            dgv_inventory.RowHeadersVisible = false;
+            dgv_inventory.AutoGenerateColumns = false;
+            dgv_inventory.DataSource = _player.Inventory;
+
+            dgv_inventory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Name",
+                Width = 197,
+                DataPropertyName = "Description"
+            });
+
+            dgv_inventory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Quantity",
+                DataPropertyName = "Quantity"
+            });
+
+            dgv_quests.RowHeadersVisible = false;
+            dgv_quests.AutoGenerateColumns = false;
+            dgv_quests.DataSource = _player.Quests;
+
+            dgv_quests.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Name",
+                Width = 197,
+                DataPropertyName = "Name"
+            });
+
+            dgv_quests.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Done?",
+                DataPropertyName = "IsCompleted"
+            });
+
+            cb_weapons.DataSource = _player.Weapons;
+            cb_weapons.DisplayMember = "Name";
+            cb_weapons.ValueMember = "Id";
+
+            if(_player.CurrentWeapon != null)
+            {
+                cb_weapons.SelectedItem = _player.CurrentWeapon;
+            }
+
+            cb_weapons.SelectedIndexChanged += cb_weapons_SelectedIndexChanged;
+
+            cb_potions.DataSource = _player.Potions;
+            cb_potions.DisplayMember = "Name";
+            cb_potions.ValueMember = "Id";
+
+            _player.PropertyChanged += PlayerOnPropertyChanged;
+
             MoveTo(_player.CurrentLocation);
-            UpdatePlayerStats();
         }
 
         private void btn_north_Click(object sender, EventArgs e)
@@ -75,7 +130,6 @@ namespace RPG_GAME
             rtb_location.Text += newLocation.Description + Environment.NewLine;
 
             _player.CurrentHitPoints = _player.MaximumHitPoints;
-            UpdatePlayerStats();
 
             if (newLocation.QuestAvaibleHere != null)
             {
@@ -167,10 +221,10 @@ namespace RPG_GAME
                     _currentMonster.LootTable.Add(lootItem);
                 }
 
-                cb_weapons.Visible = true;
-                cb_potions.Visible = true;
-                btn_use_weapon.Visible = true;
-                btn_use_potion.Visible = true;
+                cb_weapons.Visible = _player.Weapons.Any();
+                cb_potions.Visible = _player.Potions.Any();
+                btn_use_weapon.Visible = _player.Weapons.Any(); 
+                btn_use_potion.Visible = _player.Potions.Any();
             }
             else
             {
@@ -182,50 +236,13 @@ namespace RPG_GAME
                 btn_use_potion.Visible = false;
             }
 
-            UpdateInventoryListInUI();
-            UpdateQuestListInUI();
-            UpdateWeaponListInUI();
-            UpdatePotionListInUI();
+            //UpdateWeaponListInUI();
+            //UpdatePotionListInUI();
             ScrollToBottomOfMessages();
         }
 
-        private void UpdateInventoryListInUI()
-        {
-            dgv_inventory.RowHeadersVisible = false;
-
-            dgv_inventory.ColumnCount = 2;
-            dgv_inventory.Columns[0].Name = "Name";
-            dgv_inventory.Columns[1].Width = 197;
-            dgv_inventory.Columns[1].Name = "Quantity";
-
-            dgv_inventory.Rows.Clear();
-
-            foreach (InventoryItem ii in _player.Inventory)
-            {
-                if (ii.Quantity > 0)
-                {
-                    dgv_inventory.Rows.Add(new[] { ii.Details.Name, ii.Quantity.ToString() });
-                }
-            }
-        }
-
-        private void UpdateQuestListInUI()
-        {
-            dgv_quests.RowHeadersVisible = false;
-
-            dgv_quests.ColumnCount = 2;
-            dgv_quests.Columns[0].Name = "Name";
-            dgv_quests.Columns[1].Width = 197;
-            dgv_quests.Columns[1].Name = "Done?";
-
-            dgv_quests.Rows.Clear();
-
-            foreach (PlayerQuest pq in _player.Quests)
-            {
-                dgv_quests.Rows.Add(new[] { pq.Details.Name, pq.IsCompleted.ToString() });
-            }
-        }
-
+        
+        /*
         private void UpdateWeaponListInUI()
         {
             List<Weapon> weapons = new List<Weapon>();
@@ -293,6 +310,7 @@ namespace RPG_GAME
                 cb_potions.SelectedIndex = 0;
             }
         }
+        */
 
         private void btn_use_weapon_Click(object sender, EventArgs e)
         {
@@ -354,9 +372,9 @@ namespace RPG_GAME
                 {
                     rtb_messages.Text += "You loot nothing" + Environment.NewLine;
                 }
-                UpdateInventoryListInUI();
-                UpdateWeaponListInUI();
-                UpdatePotionListInUI();
+
+                //UpdateWeaponListInUI();
+                //UpdatePotionListInUI();
                 
                 rtb_messages.Text += Environment.NewLine;
 
@@ -378,8 +396,8 @@ namespace RPG_GAME
 
                 
             }
+
             ScrollToBottomOfMessages();
-            UpdatePlayerStats();
         }
 
         private void btn_use_potion_Click(object sender, EventArgs e)
@@ -393,14 +411,7 @@ namespace RPG_GAME
                 _player.CurrentHitPoints = _player.MaximumHitPoints;
             }
 
-            foreach(InventoryItem ii in _player.Inventory)
-            {
-                if(ii.Details.ID == potion.ID)
-                {
-                    ii.Quantity--;
-                    break;
-                }
-            }
+            _player.RemoveItemFromInventory(potion, 1);
 
             rtb_messages.Text += "You drink a " + potion.Name + Environment.NewLine;
 
@@ -416,8 +427,7 @@ namespace RPG_GAME
             }
 
             ScrollToBottomOfMessages();
-            UpdateInventoryListInUI();
-            UpdatePotionListInUI();
+            //UpdatePotionListInUI();
         }
 
         private void ScrollToBottomOfMessages()
@@ -426,12 +436,27 @@ namespace RPG_GAME
             rtb_messages.ScrollToCaret();
         }
 
-        private void UpdatePlayerStats()
+        private void PlayerOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
-            lb_hitPoints.Text = _player.CurrentHitPoints.ToString();
-            lb_gold.Text = _player.Gold.ToString();
-            lb_experience.Text = _player.ExperiencePoints.ToString();
-            lb_level.Text = _player.Level.ToString();
+            if (propertyChangedEventArgs.PropertyName == "Weapons")
+            {
+                cb_weapons.DataSource = _player.Weapons;
+                if (!_player.Weapons.Any())
+                {
+                    cb_weapons.Visible = false;
+                    btn_use_weapon.Visible = false;
+                }
+            }
+
+            if (propertyChangedEventArgs.PropertyName == "Potions")
+            {
+                cb_potions.DataSource = _player.Potions;
+                if (!_player.Potions.Any())
+                {
+                    cb_potions.Visible = false;
+                    btn_use_potion.Visible = false;
+                }
+            }
         }
 
         private void f_rpg_game_FormClosed(object sender, FormClosedEventArgs e)

@@ -4,31 +4,69 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.ComponentModel;
 
 namespace Motor
 {
     public class Player : LivingCreature
     {
 
-        public int Gold { get; set; }
-        public int ExperiencePoints { get; private set; }
+        private int _gold;
+        private int _experiencePoints;
+        private int _level;
+
+        public int Gold {
+            get { return _gold; }
+            set
+            {
+                _gold = value;
+                OnPropertyChanged("Gold");
+            }
+        }
+        public int ExperiencePoints {
+            get { return _experiencePoints; } 
+            private set
+            {
+                _experiencePoints = value;
+                OnPropertyChanged("ExperiencePoints");
+                //OnPropertyChanged("Level");
+            }
+        }
         public int Level
         {
-            get;
-            private set;
+            get { return _level; }
+            private set
+            {
+                _level = value;
+                OnPropertyChanged("Level");
+            }
             //get {return ((ExperiencePoints / 100) + 1); }
         }
         public Weapon CurrentWeapon { get; set; }
         public Location CurrentLocation { get; set; }
-        public List<InventoryItem> Inventory { get; set; }
-        public List<PlayerQuest> Quests { get; set; }
+        public BindingList<InventoryItem> Inventory { get; set; }
+        public BindingList<PlayerQuest> Quests { get; set; }
+        public List<Weapon> Weapons
+        {
+            get
+            {
+                return Inventory.Where(x => x.Details is Weapon).Select(x => x.Details as Weapon).ToList();
+            }
+        }
+        public List<HealingPotion> Potions
+        {
+            get
+            {
+                return Inventory.Where(x => x.Details is HealingPotion).Select(x => x.Details as HealingPotion).ToList();
+            }
+        }
 
         private Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) : base(currentHitPoints, maximumHitPoints)
         {
             Gold = gold;
             ExperiencePoints = experiencePoints;
-            Inventory = new List<InventoryItem>();
-            Quests = new List<PlayerQuest>();
+            Inventory = new BindingList<InventoryItem>();
+            Quests = new BindingList<PlayerQuest>();
         }
 
         public static Player CreateDefaultPlayer()
@@ -66,11 +104,13 @@ namespace Motor
                 int maximumHitPoints = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/MaximumHitPoints").InnerText);
                 int gold = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/Gold").InnerText);
                 int experiencePoints = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/ExperiencePoints").InnerText);
+                int level = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/Level").InnerText);
 
                 Player player = new Player(currentHitPoints, maximumHitPoints, gold, experiencePoints);
 
                 int currentLocationID = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/CurrentLocation").InnerText);
                 player.CurrentLocation = World.LocationByID(currentLocationID);
+                player.Level = level;
 
                 if (playerData.SelectSingleNode("/Player/Stats/CurrentWeapon") != null)
                 {
@@ -119,12 +159,12 @@ namespace Motor
                 return true;
             }
 
-            return Inventory.Exists(ii => ii.Details.ID == location.ItemRequiredToEnter.ID);
+            return Inventory.Any(ii => ii.Details.ID == location.ItemRequiredToEnter.ID);
         }
 
         public bool HasThisQuest(Quest quest)
         {
-            return Quests.Exists(pq => pq.Details.ID == quest.ID);
+            return Quests.Any(pq => pq.Details.ID == quest.ID);
         }
 
         public bool CompletedThisQuest(Quest quest)
@@ -144,7 +184,7 @@ namespace Motor
         {
             foreach(QuestCompletionItem qci in quest.QuestCompletionItems)
             {            
-                if(!Inventory.Exists(ii => ii.Details.ID == qci.Details.ID && ii.Quantity >= qci.Quantity))
+                if(!Inventory.Any(ii => ii.Details.ID == qci.Details.ID && ii.Quantity >= qci.Quantity))
                 {
                     return false;
                 }
@@ -160,24 +200,26 @@ namespace Motor
                 InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == qci.Details.ID);
                 if(item != null)
                 {
-                    item.Quantity -= qci.Quantity;
+                    RemoveItemFromInventory(item.Details, qci.Quantity);
                 }
             }
         }
 
         public void AddItemsInventory(List<QuestCompletionItem> listItem)
         {
-            foreach(QuestCompletionItem qci in listItem) 
+            foreach(QuestCompletionItem itemToAdd in listItem) 
             {
-                InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == qci.Details.ID);
+                InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToAdd.Details.ID);
                 if(item == null)
                 {
-                    Inventory.Add(new InventoryItem(qci.Details, qci.Quantity));
+                    Inventory.Add(new InventoryItem(itemToAdd.Details, itemToAdd.Quantity));
                 }
                 else
                 {
-                    item.Quantity += qci.Quantity;
+                    item.Quantity += itemToAdd.Quantity;
                 }
+
+                RaiseInventoryChangedEvent(itemToAdd.Details);
             }
         }
 
@@ -191,6 +233,44 @@ namespace Motor
                 {
                     World.QuestByID(playerQuest.Details.IDPosteriorQuest).ConditionToStartQuest = true;
                 }
+            }
+        }
+
+        private void RaiseInventoryChangedEvent(Item item)
+        {
+            if (item is Weapon)
+            {
+                OnPropertyChanged("Weapons");
+            }
+            if (item is HealingPotion)
+            {
+                OnPropertyChanged("Potions");
+            }
+        }
+
+        public void RemoveItemFromInventory(Item itemToRemove, int quantity = 1)
+        {
+            InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToRemove.ID);
+
+            if (item == null)
+            {
+            
+            }
+            else
+            {
+                item.Quantity -= quantity;
+
+                if (item.Quantity < 0)
+                {
+                    item.Quantity = 0;
+                }
+
+                if (item.Quantity == 0)
+                {
+                    Inventory.Remove(item);
+                }
+
+                RaiseInventoryChangedEvent(itemToRemove);
             }
         }
 
@@ -220,6 +300,10 @@ namespace Motor
             XmlNode experiencePoints = playerData.CreateElement("ExperiencePoints");
             experiencePoints.AppendChild(playerData.CreateTextNode(this.ExperiencePoints.ToString()));
             stats.AppendChild(experiencePoints);
+
+            XmlNode level = playerData.CreateElement("Level");
+            level.AppendChild(playerData.CreateTextNode(this.Level.ToString()));
+            stats.AppendChild(level);
 
             XmlNode currentLocation = playerData.CreateElement("CurrentLocation");
             currentLocation.AppendChild(playerData.CreateTextNode(this.CurrentLocation.ID.ToString()));
