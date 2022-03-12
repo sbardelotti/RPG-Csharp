@@ -19,3 +19,4 @@ C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.dll
 C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\ref\RPG_GAME.dll
 C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.pdb
 C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.genruntimeconfig.cache
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.TradingScreen.resources

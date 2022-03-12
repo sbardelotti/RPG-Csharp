@@ -30,6 +30,14 @@ namespace Motor
                 OnPropertyChanged("Quantity");
             }
         }
+        public int ItemID
+        {
+            get { return Details.ID; }
+        }
+        public int Price
+        {
+            get { return Details.Price; }
+        }
 
         public InventoryItem(Item details, int quantity)
         {

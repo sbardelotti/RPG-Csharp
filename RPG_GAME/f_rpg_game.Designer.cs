@@ -46,6 +46,7 @@ namespace RPG_GAME
             this.btn_east = new System.Windows.Forms.Button();
             this.btn_south = new System.Windows.Forms.Button();
             this.btn_west = new System.Windows.Forms.Button();
+            this.btn_trade = new System.Windows.Forms.Button();
             this.rtb_location = new System.Windows.Forms.RichTextBox();
             this.rtb_messages = new System.Windows.Forms.RichTextBox();
             this.dgv_inventory = new System.Windows.Forms.DataGridView();
@@ -210,6 +211,16 @@ namespace RPG_GAME
             this.btn_west.Text = "West";
             this.btn_west.UseVisualStyleBackColor = true;
             this.btn_west.Click += new System.EventHandler(this.btn_west_Click);
+            //
+            // btn_trade
+            //
+            this.btn_trade.Location = new System.Drawing.Point(493, 620);
+            this.btn_trade.Name = "btn_trade";
+            this.btn_trade.Size = new System.Drawing.Size(75, 23);
+            this.btn_trade.TabIndex = 21;
+            this.btn_trade.Text = "Trade";
+            this.btn_trade.UseVisualStyleBackColor = true;
+            this.btn_trade.Click += new System.EventHandler(this.btn_trade_Click);
             // 
             // rtb_location
             // 
@@ -278,6 +289,7 @@ namespace RPG_GAME
             this.Controls.Add(this.btn_north);
             this.Controls.Add(this.btn_use_potion);
             this.Controls.Add(this.btn_use_weapon);
+            this.Controls.Add(this.btn_trade);
             this.Controls.Add(this.cb_potions);
             this.Controls.Add(this.cb_weapons);
             this.Controls.Add(this.label5);
@@ -320,6 +332,7 @@ namespace RPG_GAME
         private System.Windows.Forms.Button btn_east;
         private System.Windows.Forms.Button btn_south;
         private System.Windows.Forms.Button btn_west;
+        private System.Windows.Forms.Button btn_trade;
         private System.Windows.Forms.RichTextBox rtb_location;
         private System.Windows.Forms.RichTextBox rtb_messages;
         private System.Windows.Forms.DataGridView dgv_inventory;

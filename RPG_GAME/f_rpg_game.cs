@@ -121,6 +121,13 @@ namespace RPG_GAME
             _player.UsePotion(potion);
         }
 
+        private void btn_trade_Click(object sender, EventArgs e)
+        {
+            TradingScreen tradingScreen = new TradingScreen(_player);
+            tradingScreen.StartPosition = FormStartPosition.CenterParent;
+            tradingScreen.Show(this);
+        }
+
         private void PlayerOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
             if (propertyChangedEventArgs.PropertyName == "Weapons")
@@ -149,6 +156,8 @@ namespace RPG_GAME
                 btn_east.Visible = (_player.CurrentLocation.LocationToEast != null);
                 btn_south.Visible = (_player.CurrentLocation.LocationToSouth != null);
                 btn_west.Visible = (_player.CurrentLocation.LocationToWest != null);
+
+                btn_trade.Visible = (_player.CurrentLocation.VendorWorkingHere != null);
 
                 rtb_location.Text = _player.CurrentLocation.Name + Environment.NewLine;
                 rtb_location.Text += Environment.NewLine;

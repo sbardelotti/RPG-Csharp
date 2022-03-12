@@ -8,6 +8,7 @@ namespace Motor
 {
     public static class World
     {
+        public const int UNSSELLABLE_ITEM_PRICE = -1;
         //initializing lists
         public static readonly List<Item> Items = new List<Item>();
         public static readonly List<Monster> Monsters = new List<Monster>();
@@ -77,24 +78,24 @@ namespace Motor
         private static void PopulateItems()
         {
             //adding declared items to list
-            Items.Add(new Weapon(ITEM_ID_RUSTY_SWORD, "Rusty sword", "Rusty swords", 0, 5));
-            Items.Add(new Item(ITEM_ID_RAT_TAIL, "Rat tail", "Rat tails"));
-            Items.Add(new Item(ITEM_ID_PIECE_OF_FUR, "Piece of fur", "Pieces of fur"));
-            Items.Add(new Item(ITEM_ID_SNAKE_FANG, "Snake fang", "Snake fangs"));
-            Items.Add(new Item(ITEM_ID_SNAKE_SKIN, "Snake skin", "Snake skins"));
-            Items.Add(new Weapon(ITEM_ID_CLUB, "Club", "Clubs", 3, 10));
-            Items.Add(new HealingPotion(ITEM_ID_HEALING_POTION, "Healing potion", "Healing potions", 5));
-            Items.Add(new Item(ITEM_ID_SPIDER_FANG, "Spider fang", "Spider fangs"));
-            Items.Add(new Item(ITEM_ID_SPIDER_SILK, "Spider silk", "Spider silks"));
-            Items.Add(new Item(ITEM_ID_ADVENTURER_PASS, "Adventurer pass", "Adventurer passes"));
-            Items.Add(new Item(ITEM_ID_WOLF_TOOTH, "Wolf tooth", "Wolf tooths"));
-            Items.Add(new Item(ITEM_ID_WOLF_CLAW, "Wolf claw", "Wolf claws"));
-            Items.Add(new Weapon(ITEM_ID_DAGGER, "Dagger", "Daggers", 5, 12));
-            Items.Add(new Item(ITEM_ID_BEAR_SKIN, "Bear skin", "Bear skins"));
-            Items.Add(new Item(ITEM_ID_PANTHER_SKIN, "Panther skin", "Panther skins"));
-            Items.Add(new Weapon(ITEM_ID_IRON_SWORD, "Iron sword", "Iron swords", 10, 15));
-            Items.Add(new Item(ITEM_ID_GIGANT_SPIDER_FANG, "Gigant spider fang", "Gigant spider fangs"));
-            Items.Add(new Item(ITEM_ID_SLIME_GEL, "Slime gel", "Slime gels"));
+            Items.Add(new Weapon(ITEM_ID_RUSTY_SWORD, "Rusty sword", "Rusty swords", 0, 5, 5));
+            Items.Add(new Item(ITEM_ID_RAT_TAIL, "Rat tail", "Rat tails", 1));
+            Items.Add(new Item(ITEM_ID_PIECE_OF_FUR, "Piece of fur", "Pieces of fur", 1));
+            Items.Add(new Item(ITEM_ID_SNAKE_FANG, "Snake fang", "Snake fangs", 1));
+            Items.Add(new Item(ITEM_ID_SNAKE_SKIN, "Snake skin", "Snake skins", 2));
+            Items.Add(new Weapon(ITEM_ID_CLUB, "Club", "Clubs", 3, 10, 8));
+            Items.Add(new HealingPotion(ITEM_ID_HEALING_POTION, "Healing potion", "Healing potions", 5, 3));
+            Items.Add(new Item(ITEM_ID_SPIDER_FANG, "Spider fang", "Spider fangs", 1));
+            Items.Add(new Item(ITEM_ID_SPIDER_SILK, "Spider silk", "Spider silks", 1));
+            Items.Add(new Item(ITEM_ID_ADVENTURER_PASS, "Adventurer pass", "Adventurer passes", UNSSELLABLE_ITEM_PRICE));
+            Items.Add(new Item(ITEM_ID_WOLF_TOOTH, "Wolf tooth", "Wolf tooths", 2));
+            Items.Add(new Item(ITEM_ID_WOLF_CLAW, "Wolf claw", "Wolf claws", 2));
+            Items.Add(new Weapon(ITEM_ID_DAGGER, "Dagger", "Daggers", 5, 12, 12));
+            Items.Add(new Item(ITEM_ID_BEAR_SKIN, "Bear skin", "Bear skins", 15));
+            Items.Add(new Item(ITEM_ID_PANTHER_SKIN, "Panther skin", "Panther skins", 5));
+            Items.Add(new Weapon(ITEM_ID_IRON_SWORD, "Iron sword", "Iron swords", 10, 15, 20));
+            Items.Add(new Item(ITEM_ID_GIGANT_SPIDER_FANG, "Gigant spider fang", "Gigant spider fangs", 10));
+            Items.Add(new Item(ITEM_ID_SLIME_GEL, "Slime gel", "Slime gels", 1));
         }
 
         private static void PopulateMonsters()
@@ -187,8 +188,13 @@ namespace Motor
             Location insideCave = new Location(LOCATION_ID_INSIDE_CAVE, "Inside cave", "The environment is stuffy and with little light, but it is still possible to see with some difficulty.");
             insideCave.MonsterLivingHere = MonsterByID(MONSTER_ID_BEAR);
 
-            Location townSquare = new Location(LOCATION_ID_TOWN_SQUARE, "Town square", "You see a fountain");
+            Location townSquare = new Location(LOCATION_ID_TOWN_SQUARE, "Town square", "You see a fountain.");
             townSquare.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_FOREST));
+            Vendor billTestanniwhlldo = new Vendor("Biil the Testanniwhlldo");
+            billTestanniwhlldo.AddItemToInventory(ItemByID(ITEM_ID_PIECE_OF_FUR), 5);
+            billTestanniwhlldo.AddItemToInventory(ItemByID(ITEM_ID_RAT_TAIL), 3);
+            billTestanniwhlldo.AddItemToInventory(ItemByID(ITEM_ID_IRON_SWORD));
+            townSquare.VendorWorkingHere = billTestanniwhlldo;
 
             Location alchemistHut = new Location(LOCATION_ID_ALCHEMIST_HUT, "Alchemist's hut", "There are many strange plants on the shelves.");
             alchemistHut.QuestAvaibleHere.Add(QuestByID(QUEST_ID_CLEAR_ALCHEMIST_GARDEN));
@@ -290,7 +296,6 @@ namespace Motor
             Locations.Add(forest3);
         }
 
-        //takes the id and returns an item object
         public static Item ItemByID(int id)
         {
             foreach(Item item in Items)

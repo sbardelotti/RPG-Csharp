@@ -4,5 +4,8 @@
     <Compile Update="f_rpg_game.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="TradingScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

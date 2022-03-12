@@ -18,6 +18,7 @@ namespace Motor
         public Location LocationToSouth { get; set; }
         public Location LocationToWest { get; set; }
         public List<Quest> QuestAvaibleHere { get; set; }
+        public Vendor VendorWorkingHere { get; set; }
 
 
         public Location(int id, string name, string description, Item itemRequiredToEnter = null, Monster monsterLivingHere = null)
