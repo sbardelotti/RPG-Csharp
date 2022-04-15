@@ -141,11 +141,13 @@ namespace Motor
                 {
                     int id = Convert.ToInt32(node.Attributes["ID"].Value);
                     bool isCompleted = Convert.ToBoolean(node.Attributes["IsCompleted"].Value);
-                    bool conditionToStart = Convert.ToBoolean(node.Attributes["ConditionToStart"].Value);
 
                     PlayerQuest playerQuest = new PlayerQuest(World.QuestByID(id));
                     playerQuest.IsCompleted = isCompleted;
-                    playerQuest.Details.ConditionToStartQuest = conditionToStart;
+                    if(playerQuest.IsCompleted&&playerQuest.Details.IDPosteriorQuest!=0)
+                    {
+                        World.QuestByID(playerQuest.Details.IDPosteriorQuest).ConditionToStartQuest = true;
+                    }
 
                     player.Quests.Add(playerQuest);
                 }
@@ -620,14 +622,19 @@ namespace Motor
                 isCompletedAttribute.Value = quest.IsCompleted.ToString();
                 playerQuest.Attributes.Append(isCompletedAttribute);
 
-                XmlAttribute conditionToStartAttribute = playerData.CreateAttribute("ConditionToStart");
-                conditionToStartAttribute.Value = quest.Details.ConditionToStartQuest.ToString();
-                playerQuest.Attributes.Append(conditionToStartAttribute);
-
                 playerQuests.AppendChild(playerQuest);
             }
 
             return playerData.InnerXml;
+        }
+
+        public static Player CreatePlayerFromDatabase(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints, int currentLocationID, int level, int currentWeapon)
+        {
+            Player player = new Player(currentHitPoints, maximumHitPoints, gold, experiencePoints);
+            player.Level = level;
+            //player.CurrentWeapon = (Weapon) World.ItemByID(currentWeapon);
+            //player.MoveTo(World.LocationByID(currentLocationID));
+            return player;
         }
     }
 }

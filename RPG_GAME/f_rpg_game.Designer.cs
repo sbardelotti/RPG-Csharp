@@ -211,9 +211,9 @@ namespace RPG_GAME
             this.btn_west.Text = "West";
             this.btn_west.UseVisualStyleBackColor = true;
             this.btn_west.Click += new System.EventHandler(this.btn_west_Click);
-            //
+            // 
             // btn_trade
-            //
+            // 
             this.btn_trade.Location = new System.Drawing.Point(493, 620);
             this.btn_trade.Name = "btn_trade";
             this.btn_trade.Size = new System.Drawing.Size(75, 23);
@@ -247,13 +247,13 @@ namespace RPG_GAME
             this.dgv_inventory.AllowUserToResizeRows = false;
             this.dgv_inventory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_inventory.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dgv_inventory.Enabled = false;
             this.dgv_inventory.Location = new System.Drawing.Point(16, 130);
             this.dgv_inventory.MultiSelect = false;
             this.dgv_inventory.Name = "dgv_inventory";
             this.dgv_inventory.ReadOnly = true;
             this.dgv_inventory.RowHeadersVisible = false;
             this.dgv_inventory.RowTemplate.Height = 23;
+            this.dgv_inventory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgv_inventory.Size = new System.Drawing.Size(312, 309);
             this.dgv_inventory.TabIndex = 19;
             // 

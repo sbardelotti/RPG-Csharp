@@ -20,6 +20,20 @@ namespace RPG_GAME
         {
             InitializeComponent();
 
+            _player = PlayerDataMapper.CreateFromDataBase();
+            if(_player == null)
+            {
+                MessageBox.Show("Unable to load from database");
+                if (File.Exists(PLAYER_DATA_FILE_NAME))
+                {
+                    _player = Player.CreatePlayerFromXmlString(File.ReadAllText(PLAYER_DATA_FILE_NAME));
+                }
+                else
+                {
+                    _player = Player.CreateDefaultPlayer();
+                }
+            }
+            /*
             if (File.Exists(PLAYER_DATA_FILE_NAME))
             {
                 _player = Player.CreatePlayerFromXmlString(File.ReadAllText(PLAYER_DATA_FILE_NAME));
@@ -27,7 +41,7 @@ namespace RPG_GAME
             else
             {
                 _player = Player.CreateDefaultPlayer();
-            }
+            }*/
 
             lb_hitPoints.DataBindings.Add("Text", _player, "CurrentHitPoints");
             lb_gold.DataBindings.Add("Text", _player, "Gold");
@@ -132,7 +146,12 @@ namespace RPG_GAME
         {
             if (propertyChangedEventArgs.PropertyName == "Weapons")
             {
+                Weapon previouslySelectedWeapon = _player.CurrentWeapon;
                 cb_weapons.DataSource = _player.Weapons;
+                if(previouslySelectedWeapon != null)
+                {
+                    cb_weapons.SelectedItem = previouslySelectedWeapon;
+                }
                 if (!_player.Weapons.Any())
                 {
                     cb_weapons.Visible = false;
@@ -193,7 +212,9 @@ namespace RPG_GAME
 
         private void f_rpg_game_FormClosed(object sender, FormClosedEventArgs e)
         {
+            //File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());
             File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());
+            PlayerDataMapper.SaveToDataBase(_player);
         }
 
         private void cb_weapons_SelectedIndexChanged(object sender, EventArgs e)

@@ -20,3 +20,9 @@ C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\ref\RPG_GAME.dl
 C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.pdb
 C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.genruntimeconfig.cache
 C:\Users\Mimi\source\repos\RPG\RPG_GAME\obj\Debug\net5.0-windows\RPG_GAME.TradingScreen.resources
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\bin\Debug\net5.0-windows\System.Data.SqlClient.dll
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\bin\Debug\net5.0-windows\runtimes\win-arm64\native\sni.dll
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\bin\Debug\net5.0-windows\runtimes\win-x64\native\sni.dll
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\bin\Debug\net5.0-windows\runtimes\win-x86\native\sni.dll
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\bin\Debug\net5.0-windows\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\Mimi\source\repos\RPG\RPG_GAME\bin\Debug\net5.0-windows\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
